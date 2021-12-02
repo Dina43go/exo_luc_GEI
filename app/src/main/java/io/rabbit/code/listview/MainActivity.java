@@ -64,9 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (produit != null) {
-            Log.i("$$$$$$$$$$$$$", produit.toString());
             addProduct(produit);
-
         } else {
             listProduct();
         }
@@ -104,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                //produitRoomDAO.insert(produit);
+                produitRoomDAO.insert(produit);
                 produitList.addAll(produitRoomDAO.findAll());
                 Log.i("PRODUIT__ROMM", String.valueOf(productWebService.createProduct(product)));
                 productWebService.createProduct(product);
