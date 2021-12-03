@@ -15,6 +15,7 @@ import io.rabbit.code.listview.DAO.ProduitDAO;
 import io.rabbit.code.listview.DAO.ProduitRoomDAO;
 import io.rabbit.code.listview.databinding.ActivityDetailProduitBinding;
 import io.rabbit.code.listview.entities.Product;
+import io.rabbit.code.listview.websevices.ProductWebService;
 
 public class DetailProduit extends AppCompatActivity {
 
@@ -81,17 +82,27 @@ public class DetailProduit extends AppCompatActivity {
     public void suprimerProduit () {
 
         Thread thread = new Thread(new Runnable() {
+            ProductWebService productWebService = new ProductWebService();
+            String msg = "";
             @Override
             public void run() {
-                produitRoomDAO.delete(produit);
+
+                if (!productWebService.getProducts().isEmpty()) {
+                    productWebService.deleteProduct(produit);
+                    msg ="Requette de supression éffectué";
+                } else {
+                    produitRoomDAO.delete(produit);
+                    msg = "produit suprimé";
+                }
+
                 runOnUiThread(()->{
-                    Log.i("xxxxxxxx", "Produit a été suprimé");
+                    //Log.i("xxxxxxxx", "Produit a été suprimé");
+                    Toast.makeText(DetailProduit.this , msg , Toast.LENGTH_SHORT).show();
                 });
             }
         });
         thread.start();
-        Toast.makeText(DetailProduit.this , "Le produit a été supprimé" ,Toast.LENGTH_LONG)
-                .show();
+
         Intent intent = new Intent(this , MainActivity.class);
         startActivity(intent);
     }

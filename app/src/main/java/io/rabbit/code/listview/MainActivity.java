@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     ProductAdapter adapter;
     Product produit = new Product();
-    //ProduitDAO produitDAO = new ProduitDAO(MainActivity.this);
 
     ProduitRoomDAO produitRoomDAO;
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             ProductWebService productWebService = new ProductWebService();
             @Override
             public void run() {
-                //produitRoomDAO.findAll()
+
                 Log.i("SERVER____SIDE____CREAT", String.valueOf(productWebService.getProducts()));
                 liste.addAll(productWebService.getProducts());
                 produitList.addAll(produitRoomDAO.findAll());
@@ -88,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                         makeProductListAdapter(liste);
                     } else {
                         makeProductListAdapter(produitList);
+                        Toast.makeText(MainActivity.this , "Nous navons pas pu joindre le serveur distant" , Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -105,9 +105,17 @@ public class MainActivity extends AppCompatActivity {
                 produitRoomDAO.insert(produit);
                 produitList.addAll(produitRoomDAO.findAll());
                 Log.i("PRODUIT__ROMM", String.valueOf(productWebService.createProduct(product)));
-                productWebService.createProduct(product);
+
+                Product produit_ =  productWebService.createProduct(product);
+                liste.addAll(productWebService.getProducts());
                 runOnUiThread(()->{
-                    makeProductListAdapter(produitList);
+                    if (produit_ != null) {
+                        makeProductListAdapter(liste);
+                    } else {
+                        makeProductListAdapter(produitList);
+                        Toast.makeText(MainActivity.this , "Nous navons pas pu Ajouter un produit au serveur distant" , Toast.LENGTH_LONG).show();
+                    }
+
                 });
             }
         });

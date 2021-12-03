@@ -14,6 +14,7 @@ import io.rabbit.code.listview.DAO.DataBaseRoom;
 import io.rabbit.code.listview.DAO.ProduitRoomDAO;
 import io.rabbit.code.listview.databinding.ActivitySetProduitBinding;
 import io.rabbit.code.listview.entities.Product;
+import io.rabbit.code.listview.websevices.ProductWebService;
 
 public class SetProduit extends AppCompatActivity {
 
@@ -55,18 +56,26 @@ public class SetProduit extends AppCompatActivity {
                     produit.setQuantityInStock(Integer.parseInt(i5));
 
                     Thread thread = new Thread(new Runnable() {
+                        ProductWebService productWebService = new ProductWebService();
+                        String msg = "";
                         @Override
                         public void run() {
 
+                            if (!productWebService.getProducts().isEmpty()) {
+                                productWebService.updateProduct(produit);
+                                msg ="Requette de modification éffectué";
+                            } else {
+                                produitRoomDAO.update(produit);
+                                msg = "produit modifié";
+                            }
+
                             produitRoomDAO.update(produit);
                             runOnUiThread(()->{
-                                Log.i("xxxxxxxxMMMM", "Produit a été modifié");
+                                Toast.makeText(SetProduit.this , msg , Toast.LENGTH_SHORT).show();
                             });
                         }
                     });
                     thread.start();
-                    Toast.makeText(SetProduit.this , "Le produit a modifié" ,Toast.LENGTH_LONG)
-                            .show();
                     Intent intent = new Intent(SetProduit.this , MainActivity.class);
                     startActivity(intent);
 
